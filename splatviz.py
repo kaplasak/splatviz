@@ -107,6 +107,7 @@ class Splatviz(imgui_window.ImguiWindow):
         self.set_position(0, 0)
         self._adjust_font_size()
         self.skip_frame()
+        self.preprocessed_images = []
 
     def close(self):
         for widget in self.widgets:
@@ -189,6 +190,8 @@ class Splatviz(imgui_window.ImguiWindow):
             tex.draw(pos=pos, align=0.5, rint=True, color=1)
         if "eval" in self.result:
             self.eval_result = self.result.eval
+        if "preprocessed_images" in self.result:
+            self.preprocessed_images = self.result.preprocessed_images
         else:
             self.eval_result = None
 

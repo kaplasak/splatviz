@@ -1,17 +1,18 @@
+import copy
 import pickle
 import numpy as np
 import torch
 import torch.nn
 from tqdm import tqdm
 
+from Inversion import Inversion
 from scene.gaussian_model import GaussianModel
 from gaussian_renderer import render_simple
 from renderer.base_renderer import Renderer
 from scene.cameras import CustomCam
 from splatviz_utils.dict_utils import EasyDict
-from gan_helper.latent_vector import LatentMap
+from gan_helper.latent_vector import LatentMapRandom, LatentMapPCA
 from gan_helper.view_conditioning import view_conditioning
-
 
 class GANRenderer(Renderer):
     def __init__(self):
@@ -20,11 +21,17 @@ class GANRenderer(Renderer):
         self.last_latent = torch.zeros([1, 512], device=self._device)
         self._current_pkl_file_path = ""
         self.gaussian_model = GaussianModel(sh_degree=0, disable_xyz_log_activation=True)
-        self.latent_map = LatentMap()
+        self.latent_map = None
         self.device = torch.device("cuda")
         self.last_truncation_psi = 1.0
         self.last_mapping_conditioning = "frontal"
         self.last_seed = 0
+
+        self.inversion_generator = None
+        self.inverter = None
+        self.w_inversion = torch.randn([1, 512], device=self._device)
+        self.inversion_step = 0
+        self.use_inversion_w = False
 
     def _render_impl(
         self,
@@ -46,39 +53,69 @@ class GANRenderer(Renderer):
         mapping_conditioning="frontal",
         save_ply_grid_path=None,
         seed=0,
+        inversion_images=[],
+        flame_params=None,
+        run_inversion=False,
+        run_tuning=False,
+        inversion_hyperparams={},
+        tuning_hyperparams={},
         slider={},
         **other_args
     ):
         slider = EasyDict(slider)
+        self.pca_latent = True
+        model_changed = self.load(ply_file_paths[0])
+
+        if len(inversion_images) > 0:
+            res.preprocessed_images = self.inverter.preprocess(inversion_images, target_size=self.generator.resolution)
+
+        if run_inversion:
+            self.w_inversion, loss = self.inverter.inversion_step(inversion_hyperparams)
+        if run_tuning:
+            self.w_inversion, loss = self.inverter.tuning_step(tuning_hyperparams)
+
+        self.use_inversion_w = run_inversion or run_tuning
+
         cam_params = cam_params.to(self.device)
         mapping_conditioning_changed = mapping_conditioning != self.last_mapping_conditioning
         seed_changed = seed != self.last_seed
         self.last_mapping_conditioning = mapping_conditioning
-        if seed_changed:
+        if seed_changed or self.latent_map is None:
             torch.manual_seed(seed)
             np.random.seed(seed)
-            self.latent_map = LatentMap()
-            self.latent_map.load_w_map(self.generator.mapping, truncation_psi)
+            self.create_latent_map()
             self.last_seed = seed
 
         # generator
-        model_changed = self.load(ply_file_paths[0])
         truncation_psi_changed = self.last_truncation_psi != truncation_psi
         if truncation_psi_changed and latent_space == "W":
-            self.latent_map.load_w_map(self.generator.mapping, truncation_psi)
+            if not self.pca_latent:
+                self.latent_map.load_w_map(self.generator.mapping, truncation_psi)
 
-        latent = self.latent_map.get_latent(latent_x, latent_y, latent_space=latent_space)
+        if self.pca_latent:
+            latent = self.latent_map.get_latent(latent_x, latent_y, component_index_1=10, component_index_2=11)
+        else:
+            latent = self.latent_map.get_latent(latent_x, latent_y, latent_space=latent_space)
         latent_changed = not torch.equal(self.last_latent, latent)
 
-        if seed_changed or latent_changed or model_changed or truncation_psi_changed or mapping_conditioning_changed or mapping_conditioning == "current":
-            gan_camera_params, mapping_camera_params = view_conditioning(cam_params, fov, mapping_conditioning)
-            if latent_space == "Z":
-                mapped_latent = self.generator.mapping(latent, mapping_camera_params, truncation_psi=truncation_psi)
-            elif latent_space == "W":
-                mapped_latent = latent[:, None, :] .repeat(1, self.generator.mapping_network.num_ws, 1)
-            gan_result = self.generator.synthesis(mapped_latent, gan_camera_params, render_output=False)
-            self.last_latent = latent
-            self.extract_gaussians(gan_result)
+        with torch.no_grad():
+            if seed_changed or latent_changed or model_changed or truncation_psi_changed or mapping_conditioning_changed or mapping_conditioning == "current" or run_inversion or run_tuning:
+                gan_camera_params, mapping_camera_params = view_conditioning(cam_params, fov, mapping_conditioning)
+                if latent_space == "Z":
+                    mapped_latent = self.generator.mapping(latent, mapping_camera_params, truncation_psi=truncation_psi)
+                elif latent_space == "W":
+                    mapped_latent = latent[:, None, :] .repeat(1, self.generator.mapping_network.num_ws, 1)
+
+                # mapped_latent = torch.tensor(np.load("/home/barthel/projects/3d-multiview-inversion/main/out/2025.05.27-20:021024/final_projected_w.npz")["w"], device=self.device)
+                # cond = torch.zeros([1, 78], device=self.device, dtype=torch.float)
+                # if flame_params is not None:
+                #     cond[:, 25:] = flame_params
+
+                if self.use_inversion_w:
+                    mapped_latent = self.w_inversion
+                gan_result = self.generator.synthesis(mapped_latent, gan_camera_params, render_output=False)
+                self.last_latent = latent
+                self.extract_gaussians(gan_result)
 
         # edit 3DGS scene
         gs = self.gaussian_model
@@ -98,6 +135,14 @@ class GANRenderer(Renderer):
 
         if save_ply_grid_path is not None:
             self.save_ply_grid(cam_params, fov, latent_space, mapped_latent, mapping_conditioning, truncation_psi)
+
+    def create_latent_map(self):
+        if self.pca_latent:
+            self.latent_map = LatentMapPCA()
+            self.latent_map.load_w_map(self.generator.mapping)
+        else:
+            self.latent_map = LatentMapRandom()
+            self.latent_map.load_w_map(self.generator.mapping, self.last_truncation_psi)
 
     def save_ply_grid(self, cam_params, fov, latent_space, mapped_latent, mapping_conditioning, truncation_psi, steps=16):
         xs, ys = np.meshgrid(np.linspace(-0.5, 0.5, steps), np.linspace(-0.5, 0.5, steps))
@@ -133,8 +178,8 @@ class GANRenderer(Renderer):
 
         with open(pkl_file_path, "rb") as input_file:
             save_file = pickle.load(input_file)
-        self.generator = save_file["G_ema"]
-        self.generator = self.generator.to(self.device)
+        self.generator = copy.deepcopy(save_file["G_ema"]).eval().requires_grad_(True).to(self.device)
         self._current_pkl_file_path = pkl_file_path
-        self.latent_map.load_w_map(self.generator.mapping, self.last_truncation_psi)
+        self.create_latent_map()
+        self.inverter = Inversion(self.generator, device="cuda:0")
         return True

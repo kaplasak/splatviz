@@ -37,7 +37,7 @@ class RenderWidget(Widget):
         self.render_alpha = False
         self.render_depth = False
         self.render_gan_image = False
-        self.resolution = 1024
+        self.resolution = 512
         self.background_color = torch.tensor([1.0, 1.0, 1.0])
         self.img_normalize = False
         self.current_colormap = 0
