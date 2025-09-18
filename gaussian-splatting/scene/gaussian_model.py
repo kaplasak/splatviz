@@ -11,11 +11,11 @@
 
 import torch
 import numpy as np
-from utils.general_utils import inverse_sigmoid
+from gs_utils.general_utils import inverse_sigmoid
 import os
-from utils.system_utils import mkdir_p
+from gs_utils.system_utils import mkdir_p
 from plyfile import PlyData, PlyElement
-from utils.general_utils import strip_symmetric, build_scaling_rotation
+from gs_utils.general_utils import strip_symmetric, build_scaling_rotation
 
 def log_transform(x):
     return torch.sign(x) * torch.log1p(torch.abs(x))

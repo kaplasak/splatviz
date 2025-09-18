@@ -9,7 +9,6 @@ np.set_printoptions(precision=2)
 
 from renderer.renderer_wrapper import RendererWrapper
 from renderer.gaussian_renderer import GaussianRenderer
-from renderer.gan_renderer import GANRenderer
 
 from renderer.attach_renderer import AttachRenderer
 from splatviz_utils.gui_utils import imgui_window
@@ -22,11 +21,9 @@ from widgets import (
     edit,
     eval,
     performance,
-    load_pkl,
     load_ply,
     camera,
     save,
-    latent,
     render,
     training,
 )
@@ -76,19 +73,6 @@ class Splatviz(imgui_window.ImguiWindow):
             sys.path.append(gan_path)
             renderer = AttachRenderer(host=host, port=port)
             update_all_the_time = True
-        elif mode == "gan":
-            self.widgets = [
-                load_pkl.LoadWidget(self, data_path, file_ending=".pkl"),
-                camera.CamWidget(self, fov=12, radius=2.7, up_direction=1),
-                performance.PerformanceWidget(self),
-                save.CaptureWidget(self),
-                render.RenderWidget(self),
-                edit.EditWidget(self),
-                eval.EvalWidget(self),
-                latent.LatentWidget(self),
-            ]
-            sys.path.append(gan_path)
-            renderer = GANRenderer()
         else:
             raise NotImplementedError(f"Mode '{mode}' not recognized.")
 
@@ -105,6 +89,7 @@ class Splatviz(imgui_window.ImguiWindow):
         self.set_position(0, 0)
         self._adjust_font_size()
         self.skip_frame()
+        self.preprocessed_images = []
 
     def close(self):
         for widget in self.widgets:
@@ -189,6 +174,9 @@ class Splatviz(imgui_window.ImguiWindow):
             self.eval_result = self.result.eval
         else:
             self.eval_result = None
+
+        if "preprocessed_images" in self.result:
+            self.preprocessed_images = self.result.preprocessed_images
 
         # End frame.
         self._adjust_font_size()

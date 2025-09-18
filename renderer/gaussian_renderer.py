@@ -96,6 +96,12 @@ class GaussianRenderer(Renderer):
             if save_ply_path is not None:
                 self.save_ply(gs, save_ply_path)
 
+
+        res.mean_xyz = torch.mean(gs.get_xyz, dim=0)
+        res.std_xyz = torch.std(gs.get_xyz)
+        if len(eval_text) > 0:
+            res.eval = eval(eval_text)
+
         self._return_image(
             images,
             res,
@@ -105,11 +111,6 @@ class GaussianRenderer(Renderer):
             colormap=colormap,
             invert=invert
         )
-
-        res.mean_xyz = torch.mean(gs.get_xyz, dim=0)
-        res.std_xyz = torch.std(gs.get_xyz)
-        if len(eval_text) > 0:
-            res.eval = eval(eval_text)
 
     def _load_model(self, ply_file_path):
         if ply_file_path.endswith(".ply"):

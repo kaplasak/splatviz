@@ -22,8 +22,7 @@ class Renderer:
         self._start_event.record(torch.cuda.current_stream(self._device))
         res = EasyDict()
         try:
-            with torch.no_grad():
-                self._render_impl(res, **args)
+            self._render_impl(res, **args)
         except Exception as e:
             res.error = "".join(traceback.format_exception(e))
             res.error += str(e)
