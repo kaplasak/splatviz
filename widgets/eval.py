@@ -19,9 +19,6 @@ class EvalWidget(Widget):
 
     @imgui_utils.scoped_by_object_id
     def __call__(self, show=True):
-        viz = self.viz
-        viz.args.eval_text = ""
-
         if show:
             label("Eval code:")
             _changed, self.text = imgui.input_text("##input_text", self.text)
@@ -29,7 +26,9 @@ class EvalWidget(Widget):
             with style.eval_color():
                 with imgui_utils.change_font(self.viz._imgui_fonts_code[self.viz._cur_font_size]):
                     self.handle_type_rec(self.viz.eval_result, depth=0, obj_name="")
-            viz.args.eval_text = self.text
+            self.viz.args.eval_text = self.text
+        else:
+            self.viz.args.eval_text = ""
 
     def handle_type_rec(self, result, depth, obj_name):
         if (
