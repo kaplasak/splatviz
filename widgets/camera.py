@@ -28,6 +28,7 @@ class CamWidget(Widget):
         self.forward = torch.tensor([0.0, 0.0, 1.0], device=device)
 
         # controls
+        self.show_cam_speed_options = False
         self.pose = EasyDict(yaw=np.pi, pitch=0)
         self.invert_x = False
         self.invert_y = False
@@ -45,6 +46,8 @@ class CamWidget(Widget):
         self.momentum_dropoff = 0.8
         self.momentum = 0.3
 
+        self.show_extrinsics = False
+
     @imgui_utils.scoped_by_object_id
     def __call__(self, show: bool):
         viz = self.viz
@@ -59,27 +62,33 @@ class CamWidget(Widget):
             label("Camera Mode", viz.label_w)
             _, self.current_control_mode = imgui.combo("##cam_modes", self.current_control_mode, self.control_modes)
 
-            if self.control_modes[self.current_control_mode] == "WASD":
-                label("Move Speed", viz.label_w)
-                self.wasd_move_speed = slider(self.wasd_move_speed, "move_speed", 0.001, 1, log=True)
 
-            label("Drag Speed", viz.label_w)
-            self.drag_speed = slider(self.drag_speed, "drag_speed", 0.001, 0.1, log=True)
 
-            label("Momentum", viz.label_w)
-            self.momentum = slider(self.momentum, "momentum", 0.0, 0.999)
+            label("Show Movement Options", viz.label_w)
+            self.show_cam_speed_options = checkbox(self.show_cam_speed_options, "Show Movement Options")
 
-            label("Momentum drop-off", viz.label_w)
-            self.momentum_dropoff = slider(self.momentum_dropoff, "momentum_dropoff", 0.0, 1.0)
+            if self.show_cam_speed_options:
+                if self.control_modes[self.current_control_mode] == "WASD":
+                    label("Move Speed", viz.label_w)
+                    self.wasd_move_speed = slider(self.wasd_move_speed, "move_speed", 0.001, 1, log=True)
 
-            label("Rotate Speed", viz.label_w)
-            self.rotate_speed = slider(self.rotate_speed, "rot_speed", 0.001, 0.1, log=True)
+                label("Drag Speed", viz.label_w)
+                self.drag_speed = slider(self.drag_speed, "drag_speed", 0.001, 0.1, log=True)
 
-            label("Invert X", viz.label_w)
-            self.invert_x = checkbox(self.invert_x, "invert_x")
+                label("Momentum", viz.label_w)
+                self.momentum = slider(self.momentum, "momentum", 0.0, 0.999)
 
-            label("Invert Y", viz.label_w)
-            self.invert_y = checkbox(self.invert_y, "invert_y")
+                label("Momentum drop-off", viz.label_w)
+                self.momentum_dropoff = slider(self.momentum_dropoff, "momentum_dropoff", 0.0, 1.0)
+
+                label("Rotate Speed", viz.label_w)
+                self.rotate_speed = slider(self.rotate_speed, "rot_speed", 0.001, 0.1, log=True)
+
+                label("Invert X", viz.label_w)
+                self.invert_x = checkbox(self.invert_x, "invert_x")
+
+                label("Invert Y", viz.label_w)
+                self.invert_y = checkbox(self.invert_y, "invert_y")
 
             imgui.text("\nCamera Matrix")
 
@@ -125,11 +134,14 @@ class CamWidget(Widget):
 
         self.cam_params = create_cam2world_matrix(self.forward, self.cam_pos, self.up_vector)[0]
         if show:
-            imgui.text("\nExtrinsics Matrix")
-            imgui.input_float4("##extr0", self.cam_params.cpu().numpy().tolist()[0])
-            imgui.input_float4("##extr1", self.cam_params.cpu().numpy().tolist()[1])
-            imgui.input_float4("##extr2", self.cam_params.cpu().numpy().tolist()[2])
-            imgui.input_float4("##extr3", self.cam_params.cpu().numpy().tolist()[3])
+            label("Show Extrinsics", viz.label_w)
+            self.show_extrinsics = checkbox(self.show_extrinsics, "Show Extrinsics")
+            if self.show_extrinsics:
+                imgui.text("\nExtrinsics Matrix")
+                imgui.input_float4("##extr0", self.cam_params.cpu().numpy().tolist()[0])
+                imgui.input_float4("##extr1", self.cam_params.cpu().numpy().tolist()[1])
+                imgui.input_float4("##extr2", self.cam_params.cpu().numpy().tolist()[2])
+                imgui.input_float4("##extr3", self.cam_params.cpu().numpy().tolist()[3])
 
         viz.args.yaw = self.pose.yaw
         viz.args.pitch = self.pose.pitch
