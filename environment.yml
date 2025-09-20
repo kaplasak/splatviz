@@ -1,4 +1,4 @@
-name: gs-view
+name: splatviz
 channels:
   - pytorch
   - nvidia
@@ -29,7 +29,6 @@ dependencies:
   - tqdm=4.66
 
   - pip:
-    - gaussian-splatting/submodules/diff-gaussian-rasterization
     - imgui_bundle==1.5.2
     - imgui==2.0.0
     - scikit-image==0.24

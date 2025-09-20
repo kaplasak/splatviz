@@ -32,6 +32,7 @@ Clone repository **recursively** in order to install glm from the diff_gaussian_
 
 ```bash
 git clone https://github.com/Florian-Barthel/splatviz.git --recursive
+cd splatviz
 ```
 
 
@@ -41,14 +42,20 @@ Create environment with <b>conda</b>:
 
 ```bash
 conda env create -f environment.yml
-conda activate gs-view
+conda activate splatviz
+
+git clone --recursive https://github.com/ashawkey/diff-gaussian-rasterization
+pip install ./diff-gaussian-rasterization
 ```
 
 Alternatively, use <b>micromamba</b>:
 
 ```bash
 micromamba env create --file environment.yml --channel-priority flexible -y
-micromamba activate gs-view
+micromamba activate splatviz
+
+git clone --recursive https://github.com/ashawkey/diff-gaussian-rasterization
+pip install ./diff-gaussian-rasterization
 ```
 
 
