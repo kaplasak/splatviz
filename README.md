@@ -26,17 +26,15 @@ video</a>.
 
 ## Install
 
-### 1. Download
-
-Clone repository **recursively** in order to install glm from the diff_gaussian_rasterization package.
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Florian-Barthel/splatviz.git --recursive
+git clone https://github.com/Florian-Barthel/splatviz.git
 cd splatviz
 ```
 
 
-### 2. Install
+### 2. Install Env
 
 Create environment with <b>conda</b>:
 
@@ -81,7 +79,7 @@ Attaches to a running training (local or remote). By default the splatviz listen
 python run_main.py --mode=attach
 ```
 
-To enable editing the scene during training, follow the steps
+Optional: To enable editing the scene during training, follow the steps
 described [here](https://github.com/Florian-Barthel/splatviz_network).
 
 ## Widgets
