@@ -278,50 +278,5 @@
         "_id": "5ccd3b07-475b-4119-a004-f0f4109f92c9"
       }
     ]
-  },
-  "Recolor": {
-    "edit_text": "torch.manual_seed(0)\ngs._features_dc = torch.rand_like(gs._features_dc) *torch.rand_like(gs._features_dc)*torch.rand_like(gs._features_dc)* torch.tensor([slider.x, slider.y, slider.z], device=\"cuda\") /slider.i\ngs._features_rest = gs._features_rest * 0\n\n",
-    "slider": [
-      {
-        "key": "x",
-        "value": 1.0,
-        "min_value": -1.0,
-        "max_value": 1.0,
-        "_id": "9f3fd0c1-67a5-4b38-9ec4-36d27aceddda"
-      },
-      {
-        "key": "y",
-        "value": 1.0,
-        "min_value": -1.0,
-        "max_value": 1.0,
-        "_id": "ff4ea574-8c1d-4b56-9c3a-2cd62225e573"
-      },
-      {
-        "key": "z",
-        "value": 2.0,
-        "min_value": 0.0,
-        "max_value": 2.0,
-        "_id": "950424e3-2c1a-47ee-a07b-06d62bbd0d80"
-      },
-      {
-        "key": "i",
-        "value": 0.16300000250339508,
-        "min_value": 0.0,
-        "max_value": 1.0,
-        "_id": "baf07f97-8b62-4b3f-b61f-1d805d71b3dd",
-        "show layers": {
-          "edit_text": "start=512+ 512*4+ 4*4*512+ 4*4*4*512*2\nend=  512+ 512*4+ 4*4*512+ 4*4*4*512*2 + 4*4*4*512*2*2\n\ngs._xyz = gs._xyz[start:end]\ngs._rotation = gs._rotation[start:end]\ngs._scaling = gs._scaling[start:end]\ngs._opacity = gs._opacity[start:end]\ngs._features_dc = gs._features_dc[start:end]\ngs._features_rest = gs._features_rest[start:end]\n",
-          "slider": [
-            {
-              "key": "opacity",
-              "value": 10.0,
-              "min_value": 0.0,
-              "max_value": 20.0,
-              "_id": "12364012634"
-            }
-          ]
-        }
-      }
-    ]
   }
 }
