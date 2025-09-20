@@ -93,8 +93,8 @@ An example could look like this, where all scales are set to -8 (before activati
 _sigmoid()_), while also the background is set to 1, which corresponds to white.
 
 ```python
-gaussian._scaling = gaussian._scaling * 0 - 8
-gaussian._opacity = gaussian._opacity * 0 + 10
+gs._scaling = gs._scaling * 0 - 8
+gs._opacity = gs._opacity * 0 + 10
 ```
 
 To enable smooth editing transitions, you can create sliders (press **Add Slider**) which you can access in the
@@ -102,14 +102,14 @@ editor text by typing slider.name (eg. slider.x). An example could look as follo
 that filters all gaussians that are smaller than the value stored in **slider.x**.
 
 ```python
-mask = torch.linalg.norm(gaussian._scaling, dim=-1) < slider.x
+mask = torch.linalg.norm(gs._scaling, dim=-1) < slider.x
 
-gaussian._xyz = gaussian._xyz[mask]
-gaussian._rotation = gaussian._rotation[mask]
-gaussian._scaling = gaussian._scaling[mask]
-gaussian._opacity = gaussian._opacity[mask]
-gaussian._features_dc = gaussian._features_dc[mask]
-gaussian._features_rest = gaussian._features_rest[mask]
+gs._xyz = gs._xyz[mask]
+gs._rotation = gs._rotation[mask]
+gs._scaling = gs._scaling[mask]
+gs._opacity = gs._opacity[mask]
+gs._features_dc = gs._features_dc[mask]
+gs._features_rest = gs._features_rest[mask]
 ```
 
 Lastly, you can save and load presets of code snippets so that you don't have to type the same code again after
