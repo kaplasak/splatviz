@@ -167,18 +167,6 @@ you fly through the scene using the mouse and the WASD keys similar to the camer
 - 2024-07-12: Rebuild the whole application with imgui_bundle
 - 2024-07-05: Compare two or more Gaussian Splatting scenes side by side
 
-## 🔭 Future Plans
-
-- Test other 3DGS render for OSX support
-- Improve the Video Widget
-- Tutorial for coding new widgets or renderer
-
-## Contribute
-
-You are more than welcome to add further functionality or a better design to this interactive viewer!
-The main goal is to create an easy-to-use tool that can be applied for debugging and for understanding
-3D Gaussian Splatting objects.
-For reformating code please use [black](https://github.com/psf/black) with --line-length 120.
 
 ## Citation
 
