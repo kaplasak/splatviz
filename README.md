@@ -67,14 +67,14 @@ In some cases you will have to add this variable so that opengl uses the correct
 The default mode loads and renders standard 3DGS scenes stored in ply files or compressed yml files.
 
 ```bash
-python run_main.py --data_path=parent/path/with/ply/files
+python run_main.py
 ```
 
 Download example scenes [here](https://drive.google.com/drive/folders/1RNMis5ibSrl2a87ZX614ZPsHKaY6ams6?usp=sharing).
 
 ### Attach to Training
 
-Attaches to a running training (local or remote). By default the splatviz listens to the local host _127.0.0.1:6007_, which is used by 3DGS. Modify the host and port with `--host` and `--port`.
+Attaches to a running training (local or remote). By default, the splatviz listens to the local host _127.0.0.1:6007_, which is used by 3DGS. Modify the host and port with `--host` and `--port`.
 ```bash
 python run_main.py --mode=attach
 ```
@@ -84,20 +84,7 @@ described [here](https://github.com/Florian-Barthel/splatviz_network).
 
 ## Widgets
 
-<div align="justify"> 
-
-### 🗃️ Load Widget
-Once you run the `run_main.py` file, the viewer will directly load the first scene that is found in the data
-directory you have specified. You can change the scene by clicking the **Browse** button. You will be displayed a list
-of available _.ply_ or _.yml_ files. If you have a lot of
-scenes, you can also use the **Filter** textfield and provide comma separated keywords (eg. _lego,30000_).
-You will then only see those scenes that contain all keywords.
-
-Additionally, you can also view multiple 3D scenes at once. Simply click **Add Scene**, which loads the same scene as
-before and then change the respective scene to another .ply file using the new browse button. The scenes are either
-rendered next to each other or in a split screen mode when activating the **Splitscreen** checkbox.
-<br>
-<img src="resources/images/load.png" style="width: 600px;">
+<div align="justify">
 
 ### 🛠️ Edit Widget
 The edit widget is the core functionality of this 3D viewer. It allows for real time editing of the gaussian
@@ -151,18 +138,18 @@ two modes Orbit and WASD.
 In **Orbit** mode, the camera is looking at a specific point in 3D space, and you control the pitch and yaw of the
 camera rotating on a sphere around that point by dragging with the mouse over the rendered view. And in **WASD** mode, 
 you fly through the scene using the mouse and the WASD keys similar to the camera controls in Unity.
-
-**Important**: If the loaded scene is rotated incorrectly, you can adjust that by steering the camera so that it is
-looking straight up or down. Then set the up-vector to the current viewing direction by pressing **Set Current Direction
-**.
 </div>
 
 ## ⭐ Recent Features
 
 **_Version 1.2.0_**
 
-- 2025-05-26: Added GAN mode.
+- 2025-09-20: Fix eval widget.
+- 2025-09-20: Fix import of diff-gaussian-splatting package.
+- 2025-09-20: Simplify the camera widget.
+- 2025-09-20: Refactor scene loading widget to load the scenes from a file browser.
 - 2025-09-18: Move GAN mode to a new repository: [https://github.com/Florian-Barthel/ganviz](https://github.com/Florian-Barthel/ganviz)
+- 2025-05-26: Added GAN mode.
 
 **_Version 1.1.0_**
 

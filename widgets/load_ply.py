@@ -7,9 +7,8 @@ from widgets.widget import Widget
 
 
 class LoadWidget(Widget):
-    def __init__(self, viz, root):
+    def __init__(self, viz):
         super().__init__(viz, "Load")
-        self.root = root
         self.plys: list[str] = [""]
         self.use_splitscreen = False
         self.highlight_border = False
@@ -29,7 +28,7 @@ class LoadWidget(Widget):
                     if imgui_utils.button(f"Remove {i + 1}", width=viz.button_w):
                         plys_to_remove.append(i)
                     imgui.same_line()
-                imgui.text(f"Scene {i + 1}: " + ply[len(self.root) :])
+                imgui.text(f"Scene {i + 1}: ")
 
             for i in plys_to_remove[::-1]:
                 self.plys.pop(i)

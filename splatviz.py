@@ -25,7 +25,7 @@ from widgets import (
 
 
 class Splatviz(imgui_window.ImguiWindow):
-    def __init__(self, data_path, mode, host, port):
+    def __init__(self, mode, host, port):
         self.code_font_path = "resources/fonts/jetbrainsmono/JetBrainsMono-Regular.ttf"
         self.regular_font_path = "resources/fonts/source_sans_pro/SourceSansPro-Regular.otf"
 
@@ -48,7 +48,7 @@ class Splatviz(imgui_window.ImguiWindow):
         update_all_the_time = False
         if mode == "default":
             self.widgets = [
-                load_ply.LoadWidget(self, data_path),
+                load_ply.LoadWidget(self),
                 camera.CamWidget(self),
                 performance.PerformanceWidget(self),
                 save.CaptureWidget(self),
