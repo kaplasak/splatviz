@@ -36,7 +36,7 @@ class CamWidget(Widget):
         self.drag_speed = 0.005
         self.rotate_speed = 0.002
         self.control_modes = ["Orbit", "WASD"]
-        self.current_control_mode = 0
+        self.current_control_mode = 1
         self.last_drag_delta = imgui.ImVec2(0, 0)
 
         # momentum
