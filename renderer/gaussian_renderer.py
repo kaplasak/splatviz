@@ -119,7 +119,7 @@ class GaussianRenderer(Renderer):
         elif ply_file_path.endswith("compression_config.yml"):
             model = run_single_decompression(Path(ply_file_path).parent.absolute())
         else:
-            raise NotImplementedError("Only .ply or .yml files are supported.")
+            raise NotImplementedError("Select a .ply or .yml file.")
         return model
 
     def render_video(self, save_path, video_cams, gaussian):
