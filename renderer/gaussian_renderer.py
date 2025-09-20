@@ -10,9 +10,9 @@ from tqdm import tqdm
 from pathlib import Path
 
 from compression.compression_exp import run_single_decompression
-from gaussian_renderer import render_simple
-from scene.gaussian_model import GaussianModel
-from scene.cameras import CustomCam
+from gaussian_splatting.gaussian_renderer import render_simple
+from gaussian_splatting.scene.gaussian_model import GaussianModel
+from gaussian_splatting.scene.cameras import CustomCam
 from renderer.base_renderer import Renderer
 from splatviz_utils.dict_utils import EasyDict
 

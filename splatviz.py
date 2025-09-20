@@ -1,15 +1,10 @@
 from imgui_bundle import imgui
 import numpy as np
 import torch
-import sys
-
-sys.path.append("./gaussian-splatting")
 torch.set_printoptions(precision=2, sci_mode=False)
 np.set_printoptions(precision=2)
-
 from renderer.renderer_wrapper import RendererWrapper
 from renderer.gaussian_renderer import GaussianRenderer
-
 from renderer.attach_renderer import AttachRenderer
 from splatviz_utils.gui_utils import imgui_window
 from splatviz_utils.gui_utils import imgui_utils
@@ -30,7 +25,7 @@ from widgets import (
 
 
 class Splatviz(imgui_window.ImguiWindow):
-    def __init__(self, data_path, mode, host, port, gan_path=""):
+    def __init__(self, data_path, mode, host, port):
         self.code_font_path = "resources/fonts/jetbrainsmono/JetBrainsMono-Regular.ttf"
         self.regular_font_path = "resources/fonts/source_sans_pro/SourceSansPro-Regular.otf"
 
@@ -70,7 +65,6 @@ class Splatviz(imgui_window.ImguiWindow):
                 edit.EditWidget(self),
                 training.TrainingWidget(self),
             ]
-            sys.path.append(gan_path)
             renderer = AttachRenderer(host=host, port=port)
             update_all_the_time = True
         else:

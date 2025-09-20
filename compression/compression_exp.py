@@ -1,10 +1,10 @@
 import numpy as np
 import torch
 import os
-from scene.gaussian_model import GaussianModel
 import yaml
 import pandas as pd
 
+from gaussian_splatting.scene.gaussian_model import GaussianModel
 from compression.codecs.jpeg_xl import JpegXlCodec
 from compression.codecs.npz import NpzCodec
 from compression.codecs.exr import EXRCodec

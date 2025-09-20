@@ -8,9 +8,9 @@ from splatviz_utils.gui_utils import imgui_utils
 from splatviz_utils.gui_utils.easy_imgui import label
 from splatviz_utils.gui_utils.easy_json import load_json, save_json
 from splatviz_utils.dict_utils import EasyDict
-from scene.cameras import CustomCam
+from gaussian_splatting.scene.cameras import CustomCam
 from renderer.gaussian_renderer import GaussianRenderer
-from scene.gaussian_model import GaussianModel
+from gaussian_splatting.scene.gaussian_model import GaussianModel
 from widgets.widget import Widget
 
 default_preset = """gaussian._xyz = gaussian._xyz
