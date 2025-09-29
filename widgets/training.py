@@ -3,7 +3,7 @@ from imgui_bundle import implot
 import numpy as np
 
 from splatviz_utils.gui_utils import imgui_utils
-from splatviz_utils.gui_utils.easy_imgui import label
+from splatviz_utils.gui_utils.easy_imgui import label, checkbox
 from splatviz_utils.dict_utils import EasyDict
 from widgets.widget import Widget
 
@@ -20,6 +20,7 @@ class TrainingWidget(Widget):
         self.stop_at_value = -1
         self.stop_training = False
         self.stop_from_renderer = False
+        self.render_grad = False
 
     @imgui_utils.scoped_by_object_id
     def __call__(self, show=True):
@@ -51,6 +52,9 @@ class TrainingWidget(Widget):
         self.stop_from_renderer = stats["paused"]
 
         if show:
+            label("Render Gradients:")
+            self.render_grad = checkbox(self.render_grad, "render_grad")
+
             if self.stop_training or self.stop_from_renderer:
                 if imgui.button("Single Training Step", ImVec2(viz.label_w_large, 0)):
                     viz.args.single_training_step = True
@@ -80,3 +84,4 @@ class TrainingWidget(Widget):
                     imgui.new_line()
 
         viz.args.stop_at_value = self.stop_at_value
+        viz.args.render_grad = self.render_grad

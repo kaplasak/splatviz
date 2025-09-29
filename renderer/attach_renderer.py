@@ -107,6 +107,7 @@ class AttachRenderer(Renderer):
         slider={},
         img_normalize=False,
         save_ply_path=None,
+        render_grad=False,
         **other_args,
     ):
         cam_params = cam_params.to("cuda")
@@ -146,6 +147,7 @@ class AttachRenderer(Renderer):
             "slider": slider,
             "single_training_step": single_training_step,
             "stop_at_value": stop_at_value,
+            "render_grad": render_grad
         }
         self.send(message)
         image, stats = self.read(resolution)
